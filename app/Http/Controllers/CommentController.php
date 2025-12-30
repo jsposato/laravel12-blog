@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CommentCreated;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comment;
 use App\Models\Post;
@@ -25,6 +26,9 @@ class CommentController extends Controller
             'body' => $request->validated()['body'],
             'approved' => config('blog.comment_moderation') ? false : true,
         ]);
+
+        // Fire the event
+        CommentCreated::dispatch($comment);
 
         $message = config('blog.comment_moderation')
             ? 'Your comment has been submitted and is awaiting approval.'
